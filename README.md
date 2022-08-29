@@ -1,8 +1,9 @@
 # Hotel-Database-Project
-The design of a relational-document database.
+The design of a relational-document database. <br/>
 
-It's my first public project. 
-It represents reliational-document hotel database. It contains only two main departments - reception and additional services.
-I am translating it at the moment because I have implemented the whole project in my native language. So stay tuned, It will be in English soon.
-After that, I will upload more precise description here. 
+It's my first public project. <br/>
+It represents reliational-document hotel database. It contains only two main departments - reception and additional services. <br/>
+I am translating it at the moment because I have implemented the whole project in my native language. <br/>
+So stay tuned, It will be in English soon. <br/>
+After that, I will upload more precise description here. <br/>
 
