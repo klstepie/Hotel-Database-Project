@@ -137,4 +137,69 @@ VALUES (1, N'Unoccupied', N'The room is cleaned and ready for the guest.'),
 (3, N'Unoccupied - To clean', N'Requires cleaning after the guest has vacated the room.'),
 (4, N'Occupied - with cleaning', N'The room is cleaned during the guest''s stay.')
 
+-- Room types
+
+CREATE TABLE RoomTypes(
+	ID_RoomType int NOT NULL,
+	Type varchar(30) NOT NULL,
+	Price float NOT NULL,
+	Description text NULL,
+ CONSTRAINT PK_RoomTypes PRIMARY KEY (ID_RoomType)
+ );
+
+ALTER TABLE RoomTypes
+ADD CONSTRAINT CHK_RoomPrice CHECK  (Price > 0);
+
+-- Dumping data 
+
+INSERT INTO RoomTypes
+VALUES (1, N'Single', 359, N'Single room with a single bed.'),
+(2, N'Double', 449, N'Double room with one double bed.'),
+(3, N'Twin', 449, N'Twin room with two separate beds.'),
+(4, N'Triple', 569, N'Triple room with three separate beds.'),
+(5, N'Family', 650, N'Room for at least 2 adults and 2 children.'),
+(6, N'Deluxe Single', 459, N'Single room with higher standard.'),
+(7, N'Deluxe Double', 519, N'A double room with a higher standard.'),
+(8, N'Apartment', 858, N'Two-room suite with double bed.');
+
+
+-- Rooms 
+
+CREATE TABLE Rooms (
+	ID_Room int NOT NULL,
+	Floor varchar(2) NOT NULL,
+	ID_RoomType int NOT NULL,
+	RoomNo varchar(2) NOT NULL,
+	ID_RoomState int NOT NULL,
+ CONSTRAINT PK_Rooms PRIMARY KEY (ID_Room)
+ );
+
+ALTER TABLE Rooms 
+ADD  CONSTRAINT FK_Room_RoomType FOREIGN KEY (ID_RoomType)
+REFERENCES RoomTypes (ID_RoomType)
+
+ALTER TABLE Rooms 
+ADD  CONSTRAINT FK_Room_RoomState FOREIGN KEY (ID_RoomState)
+REFERENCES RoomStates (ID_RoomState)
+
+-- Dumping data
+
+INSERT INTO Rooms 
+VALUES (1, N'1', 1, N'1', 2),
+(2, N'2', 1, N'9', 3),
+(3, N'1', 2, N'2', 1),
+(4, N'2', 2, N'10', 1),
+(5, N'1', 3, N'3', 1),
+(6, N'2', 3, N'11', 1),
+(7, N'1', 4, N'4', 1),
+(8, N'2', 4, N'12', 1),
+(9, N'1', 5, N'5', 1),
+(10, N'2', 5, N'13', 1),
+(11, N'1', 6, N'6', 1),
+(12, N'2', 6, N'14', 1),
+(13, N'1', 7, N'7', 1),
+(14, N'2', 7, N'15', 1),
+(15, N'1', 8, N'8', 3),
+(16, N'2', 8, N'16', 1);
+
 
