@@ -202,4 +202,244 @@ VALUES (1, N'1', 1, N'1', 2),
 (15, N'1', 8, N'8', 3),
 (16, N'2', 8, N'16', 1);
 
+-- Services
+
+CREATE TABLE HotelServices (
+	ID_Service int NOT NULL,
+	Name varchar(50) NOT NULL,
+	Price float NOT NULL,
+	TimeUnit char(1) NOT NULL,
+	 Description text NULL,
+ CONSTRAINT PK_HotelServices PRIMARY KEY (ID_Service)
+ );
+
+ ALTER TABLE HotelServices 
+ ADD CHECK (Price > 0);
+
+-- Dumping data
+
+INSERT INTO HotelServices
+VALUES (1, N'Bio Sauna', 30, N'H', N'The biosauna is a sauna with a lower temperature and dry humidity than in most saunas. 
+In this sauna, water is not poured directly onto the stones and the aroma mixtures evaporate from the evaporator located on the stove.'),
+(2, N'Swimming pool', 50, N'H', N'Outdoor, year-round leisure pool measuring 5 x 10 m.'),
+(3, N'VIP Jacuzzi', 299, N'H', N'Romantic moments spent in the jacuzzi - exclusive hire (21:00-22:00)
+including a fruity snack.'),
+(4, N'Car rental', 50, N'D', N'You can rent a car.'),
+(5, N'Conference room rental', 150, N'H', N'A room consisting of two modules, divided by a sliding wall,
+with direct access to the garden with barbecue.'),
+(6, N'Guarded parking', 20, N'D', N'Guarded car park'),
+(7, N'Relaxing massage', 289, N'H', N'It is a very gentle treatment, conducted in a calm, calming atmosphere, 
+which allows the patient to take their mind off their problems and relax fully.'),
+(8, N'Stone massage', 289, N'H', N'The hot stone massage has a physiotherapeutic effect.
+It restores the efficiency of damaged organs and, at the same time, promotes rest and regeneration. 
+It thus increases the body''s exercise capacity.'),
+(9, N'Chinese bubble massage', 159, N'H', N'The Chinese bubble massage acts like a lymphatic drainage. Improves blood circulation,
+speeds up metabolism and removes excess toxic substances.'),
+(10, N'Mud bath', 120, N'H', N'A mud bath is an excellent spa treatment, regenerating the body and also beneficial to health. Mud is used for this.');
+
+
+
+-- Reservations states
+
+CREATE TABLE BookingStatuses(
+	ID_BookingStatus int NOT NULL,
+	BookingStatus varchar(15) NOT NULL,
+	Description text NULL,
+ CONSTRAINT PK_BookingStatuses PRIMARY KEY (ID_BookingStatus)
+ );
+
+-- Dumping data
+
+INSERT INTO BookingStatuses
+VALUES (1, N'Confirmed', N'A booking that is confirmed by a deposit paid.'),
+(2, N'Unconfirmed', N'A booking that is unconfirmed.'),
+(3, N'Awaiting', N'Booking status in case of no rooms available.');
+
+-- Bookings
+
+CREATE TABLE Bookings(
+	ID_Booking int IDENTITY(1,1) NOT NULL,
+	ID_Guest int NOT NULL,
+	DateFrom smalldatetime NULL,
+	DateTo smalldatetime NULL,
+	NumberOfRooms int NOT NULL,
+	ID_BookingStatus int NOT NULL,
+	BookingDate smalldatetime NULL,
+	NumberOfGuests int NOT NULL,
+	CONSTRAINT PK_Bookings PRIMARY KEY (ID_Booking)
+);
+
+ALTER TABLE Bookings
+ADD CONSTRAINT FK_Bookings_Guests FOREIGN KEY (ID_Guest)
+REFERENCES Guests (ID_Guest);
+
+ALTER TABLE Bookings
+ADD CONSTRAINT FK_Bookings_BookingStatuses FOREIGN KEY (ID_BookingStatus)
+REFERENCES BookingStatuses (ID_BookingStatus);
+
+-- Dumping data
+
+SET IDENTITY_INSERT Bookings ON
+INSERT INTO Bookings (ID_Booking, ID_Guest, DateFrom, DateTo, NumberOfRooms, ID_BookingStatus, BookingDate, NumberOfGuests)
+VALUES (1, 2, CAST(N'2023-05-01T00:00:00' AS SmallDateTime), CAST(N'2023-05-04T00:00:00' AS SmallDateTime), 1, 2, CAST(N'2022-03-02T00:00:00' AS SmallDateTime), 1),
+(2, 3, CAST(N'2023-05-03T00:00:00' AS SmallDateTime), CAST(N'2023-05-08T00:00:00' AS SmallDateTime), 1, 1, CAST(N'2022-03-10T00:00:00' AS SmallDateTime), 2),
+(3, 4, CAST(N'2023-05-05T00:00:00' AS SmallDateTime), CAST(N'2023-05-10T00:00:00' AS SmallDateTime), 1, 2, CAST(N'2022-03-05T00:00:00' AS SmallDateTime), 3),
+(4, 5, CAST(N'2023-05-04T00:00:00' AS SmallDateTime), CAST(N'2023-05-06T00:00:00' AS SmallDateTime), 2, 2, CAST(N'2022-03-11T00:00:00' AS SmallDateTime), 4),
+(5, 6, CAST(N'2023-05-02T00:00:00' AS SmallDateTime), CAST(N'2023-05-10T00:00:00' AS SmallDateTime), 1, 2, CAST(N'2022-03-16T00:00:00' AS SmallDateTime), 1),
+(6, 7, CAST(N'2023-05-06T00:00:00' AS SmallDateTime), CAST(N'2023-05-10T00:00:00' AS SmallDateTime), 1, 1, CAST(N'2022-03-18T00:00:00' AS SmallDateTime), 2),
+(7, 1, CAST(N'2023-05-11T00:00:00' AS SmallDateTime), CAST(N'2023-05-12T00:00:00' AS SmallDateTime), 1, 2, CAST(N'2022-03-11T00:00:00' AS SmallDateTime), 1),
+(8, 6, CAST(N'2023-01-01T00:00:00' AS SmallDateTime), CAST(N'2023-01-04T00:00:00' AS SmallDateTime), 1, 2, CAST(N'2022-05-22T10:21:00' AS SmallDateTime), 1),
+(9, 3, CAST(N'2022-06-12T00:00:00' AS SmallDateTime), CAST(N'2022-06-18T00:00:00' AS SmallDateTime), 1, 2, CAST(N'2022-06-12T08:22:00' AS SmallDateTime), 1),
+(10, 10, CAST(N'2023-05-06T00:00:00' AS SmallDateTime), CAST(N'2023-05-10T00:00:00' AS SmallDateTime), 1, 1, CAST(N'2022-08-15T14:28:00' AS SmallDateTime), 1),
+(12, 4, CAST(N'2022-08-16T00:00:00' AS SmallDateTime), CAST(N'2022-08-20T00:00:00' AS SmallDateTime), 1, 1, CAST(N'2022-08-16T20:43:00' AS SmallDateTime), 1),
+(14, 6, CAST(N'2022-08-16T00:00:00' AS SmallDateTime), CAST(N'2022-08-17T00:00:00' AS SmallDateTime), 1, 2, CAST(N'2022-08-16T21:13:00' AS SmallDateTime), 1),
+(15, 2, CAST(N'2022-08-15T00:00:00' AS SmallDateTime), CAST(N'2022-08-20T00:00:00' AS SmallDateTime), 1, 1, CAST(N'2022-08-16T21:27:00' AS SmallDateTime), 1)
+SET IDENTITY_INSERT Bookings OFF;
+
+-- Rooms booked 
+
+CREATE TABLE BookingRooms (
+	ID_Booking int NOT NULL,
+	ID_Room int NOT NULL,
+	ID_BookingRoom int IDENTITY(1,1) NOT NULL,
+CONSTRAINT PK_BookingRooms PRIMARY KEY (ID_BookingRoom)
+);
+
+ALTER TABLE BookingRooms 
+ADD CONSTRAINT FK_BookingRooms_Rooms FOREIGN KEY(ID_Room)
+REFERENCES Rooms (ID_Room);
+
+ALTER TABLE BookingRooms
+ADD  CONSTRAINT FK_BookingRooms_Bookings FOREIGN KEY (ID_Booking)
+REFERENCES Bookings (ID_Booking);
+
+
+-- Dumping data
+
+SET IDENTITY_INSERT BookingRooms ON 
+
+INSERT INTO BookingRooms (ID_Booking,ID_Room,ID_BookingRoom)
+VALUES (1, 1, 1),
+(2, 3, 2),
+(3, 9, 3),
+(4, 15, 4),
+(5, 12, 5),
+(6, 13, 6),
+(7, 2, 7),
+(4, 4, 8),
+(8, 11, 9),
+(9, 11, 10),
+(10, 1, 11),
+(12, 1, 14),
+(14, 2, 16),
+(15, 16, 17);
+
+SET IDENTITY_INSERT BookingRooms OFF
+
+-- Booking services
+
+CREATE TABLE ReservationOfServices (
+	ID_Booking int NOT NULL,
+	ID_Service int NOT NULL,
+	StartDate smalldatetime NOT NULL,
+	ID_Employee int NOT NULL,
+	Description text NULL,
+	EndDate smalldatetime NOT NULL,
+	ID_ReservationOfService int IDENTITY(1,1) NOT NULL,
+	CONSTRAINT PK_ID_ReservationOfService PRIMARY KEY (ID_ReservationOfService)
+);
+
+ALTER TABLE ReservationOfServices
+ADD CONSTRAINT FK_ReservationOfServices_Employees FOREIGN KEY (ID_Employee)
+REFERENCES Employees (ID_Employee);
+
+ALTER TABLE ReservationOfServices
+ADD CONSTRAINT FK_ReservationOfServices_HotelServices FOREIGN KEY (ID_Service)
+REFERENCES HotelServices (ID_Service);
+
+ALTER TABLE ReservationOfServices
+ADD CONSTRAINT FK_ReservationOfServices_Bookings FOREIGN KEY (ID_Booking)
+REFERENCES Bookings (ID_Booking);
+
+ALTER TABLE ReservationOfServices
+ADD CHECK (StartDate < EndDate);
+
+-- Dumping data
+
+
+SET IDENTITY_INSERT ReservationOfServices ON 
+
+INSERT INTO ReservationOfServices (ID_Booking, ID_Service, StartDate, ID_Employee, Description, EndDate, ID_ReservationOfService) 
+VALUES (5, 7, CAST(N'2023-05-04T13:30:00' AS SmallDateTime), 5, NULL, CAST(N'2023-05-04T14:30:00' AS SmallDateTime), 1),
+(5, 6, CAST(N'2023-05-02T00:00:00' AS SmallDateTime), 1, NULL, CAST(N'2023-05-10T00:00:00' AS SmallDateTime), 2),
+(3, 9, CAST(N'2023-05-05T14:30:00' AS SmallDateTime), 5, NULL, CAST(N'2023-05-05T15:30:00' AS SmallDateTime), 3),
+(6, 2, CAST(N'2023-05-07T12:00:00' AS SmallDateTime), 4, NULL, CAST(N'2023-05-07T14:00:00' AS SmallDateTime), 4),
+(10, 8, CAST(N'2023-05-08T14:00:00' AS SmallDateTime), 5, NULL, CAST(N'2023-05-08T15:00:00' AS SmallDateTime), 5),
+(12, 8, CAST(N'2022-08-17T14:00:00' AS SmallDateTime), 5, NULL, CAST(N'2022-08-17T15:00:00' AS SmallDateTime), 7),
+(14, 8, CAST(N'2022-08-16T14:00:00' AS SmallDateTime), 5, NULL, CAST(N'2022-08-16T15:00:00' AS SmallDateTime), 9)
+
+SET IDENTITY_INSERT ReservationOfServices OFF
+
+-- Method of payments
+
+CREATE TABLE PaymentMethods (
+	ID_PaymentMethod int NOT NULL,
+	Method varchar(20) NOT NULL,
+ CONSTRAINT PK_PaymentMethods PRIMARY KEY (ID_PaymentMethod)
+ );
+
+ -- Dumping data
+
+ INSERT PaymentMethods
+ VALUES (1, N'Cash'),
+(2, N'Transfer'),
+(3, N'Card'),
+(4, N'Card + cash');
+
+-- Payments
+
+CREATE TABLE Payments (
+	ID_Payment int IDENTITY(1,1) NOT NULL,
+	ID_Booking int NOT NULL,
+	TotalAmountToPay float NOT NULL,
+	ID_PaymentMethod int NOT NULL,
+	PaymentTerm smalldatetime NULL,
+	DateOfPayment smalldatetime NULL,
+	Deposit float NULL,
+	StatusOfAdditionalServices char(2) NULL,
+ CONSTRAINT PK_Payments PRIMARY KEY (ID_Payment)
+)
+
+ALTER TABLE Payments
+ADD CONSTRAINT FK_Payments_PaymentMethods FOREIGN KEY (ID_PaymentMethod)
+REFERENCES PaymentMethods (ID_PaymentMethod);
+
+ALTER TABLE Payments
+ADD CONSTRAINT FK_Payments_Bookings FOREIGN KEY (ID_Booking)
+REFERENCES Bookings (ID_Booking);
+
+ALTER TABLE Payments
+ADD UNIQUE (ID_Booking);
+
+-- Dumping data
+
+
+SET IDENTITY_INSERT Payments ON 
+
+INSERT INTO Payments (ID_Payment, ID_Booking, TotalAmountToPay, ID_PaymentMethod, PaymentTerm, DateOfPayment, Deposit, StatusOfAdditionalServices) 
+VALUES (1, 1, 1077, 1, CAST(N'2023-05-18T00:00:00' AS SmallDateTime), NULL, NULL, NULL),
+(2, 2, 1796, 1, CAST(N'2023-05-22T00:00:00' AS SmallDateTime), NULL, 449, NULL),
+(3, 3, 3250, 1, CAST(N'2023-05-24T00:00:00' AS SmallDateTime), NULL, NULL, NULL),
+(4, 4, 1716, 1, CAST(N'2023-05-20T00:00:00' AS SmallDateTime), NULL, NULL, NULL),
+(5, 5, 3672, 1, CAST(N'2023-05-24T00:00:00' AS SmallDateTime), NULL, NULL, NULL),
+(6, 6, 1660.8, 1, CAST(N'2023-05-24T00:00:00' AS SmallDateTime), CAST(N'2022-05-22T11:32:00' AS SmallDateTime), 415.20000000000005, NULL),
+(7, 7, 359, 3, CAST(N'2023-05-26T00:00:00' AS SmallDateTime), CAST(N'2022-05-21T09:32:00' AS SmallDateTime), NULL, NULL),
+(9, 8, 1377, 1, CAST(N'2023-01-04T00:00:00' AS SmallDateTime), NULL, NULL, NULL),
+(10, 10, 1148.8, 1, CAST(N'2023-05-10T00:00:00' AS SmallDateTime), NULL, 287.2, NULL),
+(12, 12, 1437.8, 1, CAST(N'2022-08-20T00:00:00' AS SmallDateTime), NULL, 287.2, N'OK'),
+(14, 14, 648, 3, CAST(N'2022-08-17T00:00:00' AS SmallDateTime), CAST(N'2022-08-17T19:44:00' AS SmallDateTime), NULL, N'OK'),
+(15, 15, 3775.2, 1, CAST(N'2022-08-20T00:00:00' AS SmallDateTime), NULL, 514.80000000000007, NULL)
+
+SET IDENTITY_INSERT Payments OFF
+
 
