@@ -1,16 +1,16 @@
 
 -- Create Database
-CREATE DATABASE Hotel
+CREATE DATABASE HotelDB
  CONTAINMENT = NONE
  ON  PRIMARY 
-( NAME = N'Hotel', 
-FILENAME = N'Z:\Hotel.mdf' , 
+( NAME = N'HotelDB', 
+FILENAME = N'Z:\HotelDB.mdf' , 
 SIZE = 20MB , 
 MAXSIZE = UNLIMITED, 
 FILEGROWTH = 5MB )
  LOG ON 
-( NAME = N'Hotel_Log', 
-FILENAME = N'Z:Hotel_log.ldf' , 
+( NAME = N'HotelDB_Log', 
+FILENAME = N'Z:HotelDB_log.ldf' , 
 SIZE = 10MB , 
 MAXSIZE = 40MB , 
 FILEGROWTH = 5MB )
@@ -18,7 +18,23 @@ GO
 
 -- Create Tables
 
-USE Hotel
+USE HotelDB
+
+-- Departments
+
+CREATE TABLE Departments (
+[DeptNo] [char](3) NOT NULL PRIMARY KEY,
+[DeptName] [varchar](30) NOT NULL,
+[Description] [text] NULL
+)
+
+-- Dumping Data
+
+INSERT  INTO Departments
+VALUES (N'PS1', N'Ground floor service', N'A department dedicated to guest services, ensuring the safety and care of the guest.'),
+(N'R1 ', N'Reception', N'The department dealing with visitor services at the reception desk.'),
+(N'SP1', N'Floor service', N'A department dedicated to keeping the rooms clean and ready for the arrival of guests.'),
+(N'UD1', N'Additional services', N'Department for the provision of sports and leisure services.')
 
 -- Employees
 
@@ -31,10 +47,13 @@ CREATE TABLE Employees(
 	[City] [varchar](20) NOT NULL,
 	[Postcode] [varchar](10) NOT NULL,
 	[Country] [varchar](20) NOT NULL,
-	[PhoneNumber] [char](12) NULL,
+	[PhoneNumber] [char](9) NULL,
 	[PESEL] [char](11) NOT NULL,
-	[EmploymentStatus] [varchar](11) NOT NULL
- CONSTRAINT PK_Employees PRIMARY KEY (ID_Employee))
+	[EmploymentStatus] [varchar](11) NOT NULL,
+	[DeptNo] [char](3) NOT NULL,
+ CONSTRAINT PK_Employees PRIMARY KEY (ID_Employee),
+ CONSTRAINT FK_Employees_Departments FOREIGN KEY (DeptNo) REFERENCES Departments (DeptNo)
+ )
 
 ALTER TABLE [dbo].[Employees]
 ADD CONSTRAINT DF_Employed DEFAULT ('Employed') FOR EmploymentStatus
@@ -44,13 +63,16 @@ ADD CONSTRAINT CHK_Status
 CHECK (([EmploymentStatus]='Employed' OR [EmploymentStatus]='Fired'))
 
 ALTER TABLE [dbo].[Employees] 
-ADD CHECK  (([PhoneNumber] LIKE '[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]'))
+ADD CONSTRAINT CHK_PhoneNumber
+CHECK  (([PhoneNumber] LIKE '[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]'))
 
 ALTER TABLE [dbo].[Employees]  
-ADD CHECK  (([PESEL] LIKE '[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]'))
+ADD CONSTRAINT CHK_PESEL
+CHECK  (([PESEL] LIKE '[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]'))
 
 
--- Dumping data 
+
+-- Dumping data (!!!!!!)
 
 INSERT INTO Employees 
 VALUES (1, N'Jan', N'Kowalski', N'Car park attendant', N'ul. Motylkowa 2', N'Wroclaw', N'00-000', N'Polska', N'876321123   ', N'11111111111', N'Employed'),
