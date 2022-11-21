@@ -83,8 +83,6 @@ VALUES (1, N'Jan', N'Kowalski', N'Car park attendant', N'ul. Motylkowa 2', N'Wro
 (6, N'Anna', N'Wozniak', N'Reception Manager', N'ul. Ziemniaczana 2', N'Wroclaw', N'00-005', N'Poland', N'876321155   ', N'66666666666', N'Employed',N'R1 '),
 (7, N'Krzysztof', N'Pak', N'Receptionist', N'ul. Marchewkowa 2', N'Wroclaw', N'00-006', N'Poland', N'876321166   ', N'77777777777', N'Employed', N'R1 ')
 
-
-
 -- Guest types
 
 CREATE TABLE GuestTypes(
@@ -101,7 +99,6 @@ VALUES (1, N'Family traveller'),
 (3, N'Foreign visitor'),
 (4, N'Regular guest/VIP'),
 (5, N'Individual guest')
-
 
 -- Guests
 
@@ -142,7 +139,7 @@ VALUES (1, N'Marzena', N'Piach', N'ul. Kwiatowa 124', N'Gdynia', N'00-123', N'Po
 
 SET IDENTITY_INSERT Guests OFF
 
--- Room statuses (!!!!!!)
+-- Room statuses 
 
 CREATE TABLE RoomStates(
 	ID_RoomState int NOT NULL,
@@ -186,7 +183,7 @@ VALUES (1, N'Single', 359, N'Single room with a single bed.'),
 (8, N'Apartment', 858, N'Two-room suite with double bed.');
 
 
--- Rooms 
+-- Rooms (!!!!!!)
 
 CREATE TABLE Rooms (
 	ID_Room int NOT NULL,
