@@ -72,16 +72,16 @@ CHECK  (([PESEL] LIKE '[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]')
 
 
 
--- Dumping data (!!!!!!)
+-- Dumping data 
 
 INSERT INTO Employees 
-VALUES (1, N'Jan', N'Kowalski', N'Car park attendant', N'ul. Motylkowa 2', N'Wroclaw', N'00-000', N'Polska', N'876321123   ', N'11111111111', N'Employed'),
-(2, N'Maria', N'Nowak', N'Maid', N'ul. Rozana 2', N'Rzeszow', N'00-001', N'Polska', N'876321111   ', N'22222222222', N'Employed'),
-(3, N'Monika', N'Wichura', N'Maid', N'ul. Bratkowa 2', N'Krakow', N'00-002', N'Polska', N'876321122   ', N'33333333333', N'Employed'),
-(4, N'Lukasz', N'Biegun', N'Lifeguard', N'ul. Irysowa 2', N'Hel', N'00-003', N'Polska', N'876321133   ', N'44444444444', N'Employed'),
-(5, N'Jozef', N'Stachowski', N'Masseur/Masseuse', N'ul. Rzepakowa 2', N'Wroclaw', N'00-004', N'Polska', N'876321144   ', N'55555555555', N'Employed'),
-(6, N'Anna', N'Wozniak', N'Reception Manager', N'ul. Ziemniaczana 2', N'Wroclaw', N'00-005', N'Polska', N'876321155   ', N'66666666666', N'Employed'),
-(7, N'Krzysztof', N'Pak', N'Receptionist', N'ul. Marchewkowa 2', N'Wroclaw', N'00-006', N'Polska', N'876321166   ', N'77777777777', N'Employed')
+VALUES (1, N'Jan', N'Kowalski', N'Car park attendant', N'ul. Motylkowa 2', N'Wroclaw', N'00-000', N'Polska', N'876321123   ', N'11111111111', N'Employed', N'PS1'),
+(2, N'Maria', N'Nowak', N'Maid', N'ul. Rozana 2', N'Rzeszow', N'00-001', N'Poland', N'876321111   ', N'22222222222', N'Employed', N'SP1'),
+(3, N'Monika', N'Wichura', N'Maid', N'ul. Bratkowa 2', N'Krakow', N'00-002', N'Poland', N'876321122   ', N'33333333333', N'Employed',N'SP1'),
+(4, N'Lukasz', N'Biegun', N'Lifeguard', N'ul. Irysowa 2', N'Hel', N'00-003', N'Poland', N'876321133   ', N'44444444444', N'Employed', N'UD1'),
+(5, N'Jozef', N'Stachowski', N'Masseur/Masseuse', N'ul. Rzepakowa 2', N'Wroclaw', N'00-004', N'Poland', N'876321144   ', N'55555555555', N'Employed',N'UD1'),
+(6, N'Anna', N'Wozniak', N'Reception Manager', N'ul. Ziemniaczana 2', N'Wroclaw', N'00-005', N'Poland', N'876321155   ', N'66666666666', N'Employed',N'R1 '),
+(7, N'Krzysztof', N'Pak', N'Receptionist', N'ul. Marchewkowa 2', N'Wroclaw', N'00-006', N'Poland', N'876321166   ', N'77777777777', N'Employed', N'R1 ')
 
 
 
@@ -130,18 +130,19 @@ REFERENCES GuestTypes (ID_GuestType)
 SET IDENTITY_INSERT Guests ON 
 
 INSERT INTO Guests (ID_Guest,FirstName,LastName,Address,City,PostCode,Country,PhoneNumber,EmailAddress,ID_GuestType,[Pesel/Passport],AdditionalInformation) 
-VALUES (1, N'Marzena', N'Piach', N'ul. Kwiatowa 124', N'Gdynia', N'00-123', N'Polska', N'987654321   ', N'marzp@guest.com', 5, N'12312312312', NULL),
-(2, N'Jerzy', N'Krak', N'ul. Basztowa 12', N'Gdansk', N'00-123', N'Polska', N'983526421   ', N'jekr@guest.com', 5, N'32132132132', NULL),
-(3, N'Danuta', N'Oliwka', N'ul. Rozana 124', N'Krakow', N'00-123', N'Polska', N'432134514   ', N'daol@guest.com', 1, N'23423423423', NULL),
-(4, N'Kamil', N'Dudek', N'ul. Makowa 124', N'Bialystok', N'00-123', N'Polska', N'911133333   ', N'kadu@guest.com', 1, N'45645645645', NULL),
+VALUES (1, N'Marzena', N'Piach', N'ul. Kwiatowa 124', N'Gdynia', N'00-123', N'Poland', N'987654321   ', N'marzp@guest.com', 5, N'12312312312', NULL),
+(2, N'Jerzy', N'Krak', N'ul. Basztowa 12', N'Gdansk', N'00-123', N'Poland', N'983526421   ', N'jekr@guest.com', 5, N'32132132132', NULL),
+(3, N'Danuta', N'Oliwka', N'ul. Rozana 124', N'Krakow', N'00-123', N'Poland', N'432134514   ', N'daol@guest.com', 1, N'23423423423', NULL),
+(4, N'Kamil', N'Dudek', N'ul. Makowa 124', N'Bialystok', N'00-123', N'Poland', N'911133333   ', N'kadu@guest.com', 1, N'45645645645', NULL),
 (5, N'John', N'Taylor', N'ul. 68 Reegans Road', N'Barkes Vale', N'NSW 2474', N'Australia', N'346234235   ', N'jota@guest.com', 3, N'AU 1562351 ', NULL),
-(6, N'Jadwiga', N'Oleszko', N'ul. Zielona 32', N'Przemysl', N'00-123', N'Polska', N'123332211   ', N'jaol@guest.com', 4, N'90409437323', N'<Survey><Guest><FName>Jadwiga</FName><LName>Oleszko</LName></Guest><Information><Grade><Catering>4</Catering><Entertainment>4</Entertainment><Recreation>5</Recreation><Cleanness>5</Cleanness><CustomerNeeds>4</CustomerNeeds><Staff>5</Staff><Price>3</Price></Grade><Description><Aim>Wypoczynek</Aim><Praise>Na pochwałę zasługuje pokój nr 16. To mój ulubiony pokój. Widok z okna jest fenomenalny. </Praise><ToCorrection>Możecie pomyśleć o dodaniu opcji dań wegańskich w menu restauracji.</ToCorrection></Description></Information></Survey>'),
-(7, N'Jan', N'Sikora', N'ul. Morska 4', N'Zielona Gora', N'00-123', N'Polska', N'999888777   ', N'jasi@guest.com', 2, N'77351221365', NULL),
-(8, N'Jolanta', N'Zych', N'ul. Nagietkowa 14', N'Wroclaw', N'12-432', N'Polska', N'652123123   ', NULL, 5, N'12376317643', NULL),
-(10, N'Marian', N'Oleksy', N'ul. Kosciuszki 21', N'Nowy Targ', N'11-111', N'Polska', N'982664123   ', N'maol@guest.com', 5, N'76312312312', NULL)
+(6, N'Jadwiga', N'Oleszko', N'ul. Zielona 32', N'Przemysl', N'00-123', N'Poland', N'123332211   ', N'jaol@guest.com', 4, N'90409437323', N'<Survey><Guest><FName>Jadwiga</FName><LName>Oleszko</LName></Guest><Information><Grade><Catering>4</Catering><Entertainment>4</Entertainment><Recreation>5</Recreation><Cleanness>5</Cleanness><CustomerNeeds>4</CustomerNeeds><Staff>5</Staff><Price>3</Price></Grade><Description><Aim>Wypoczynek</Aim><Praise>Na pochwałę zasługuje pokój nr 16. To mój ulubiony pokój. Widok z okna jest fenomenalny. </Praise><ToCorrection>Możecie pomyśleć o dodaniu opcji dań wegańskich w menu restauracji.</ToCorrection></Description></Information></Survey>'),
+(7, N'Jan', N'Sikora', N'ul. Morska 4', N'Zielona Gora', N'00-123', N'Poland', N'999888777   ', N'jasi@guest.com', 2, N'77351221365', NULL),
+(8, N'Jolanta', N'Zych', N'ul. Nagietkowa 14', N'Wroclaw', N'12-432', N'Poland', N'652123123   ', NULL, 5, N'12376317643', NULL),
+(10, N'Marian', N'Oleksy', N'ul. Kosciuszki 21', N'Nowy Targ', N'11-111', N'Poland', N'982664123   ', N'maol@guest.com', 5, N'76312312312', NULL)
+
 SET IDENTITY_INSERT Guests OFF
 
--- Room statuses
+-- Room statuses (!!!!!!)
 
 CREATE TABLE RoomStates(
 	ID_RoomState int NOT NULL,
