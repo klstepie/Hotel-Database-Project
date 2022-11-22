@@ -183,7 +183,7 @@ VALUES (1, N'Single', 359, N'Single room with a single bed.'),
 (8, N'Apartment', 858, N'Two-room suite with double bed.');
 
 
--- Rooms (!!!!!!)
+-- Rooms 
 
 CREATE TABLE Rooms (
 	ID_Room int NOT NULL,
@@ -229,7 +229,8 @@ CREATE TABLE HotelServices (
 	Name varchar(50) NOT NULL,
 	Price float NOT NULL,
 	TimeUnit char(1) NOT NULL,
-	 Description text NULL,
+	Description text NULL,
+	AdditionalInformation XML NULL
  CONSTRAINT PK_HotelServices PRIMARY KEY (ID_Service)
  );
 
@@ -240,22 +241,22 @@ CREATE TABLE HotelServices (
 
 INSERT INTO HotelServices
 VALUES (1, N'Bio Sauna', 30, N'H', N'The biosauna is a sauna with a lower temperature and dry humidity than in most saunas. 
-In this sauna, water is not poured directly onto the stones and the aroma mixtures evaporate from the evaporator located on the stove.'),
-(2, N'Swimming pool', 50, N'H', N'Outdoor, year-round leisure pool measuring 5 x 10 m.'),
+In this sauna, water is not poured directly onto the stones and the aroma mixtures evaporate from the evaporator located on the stove.',NULL),
+(2, N'Swimming pool', 50, N'H', N'Outdoor, year-round leisure pool measuring 5 x 10 m.',NULL),
 (3, N'VIP Jacuzzi', 299, N'H', N'Romantic moments spent in the jacuzzi - exclusive hire (21:00-22:00)
-including a fruity snack.'),
-(4, N'Car rental', 50, N'D', N'You can rent a car.'),
+including a fruity snack.',NULL),
+(4, N'Car rental', 50, N'D', N'You can rent a car.',NULL),
 (5, N'Conference room rental', 150, N'H', N'A room consisting of two modules, divided by a sliding wall,
-with direct access to the garden with barbecue.'),
-(6, N'Guarded parking', 20, N'D', N'Guarded car park'),
+with direct access to the garden with barbecue.',NULL),
+(6, N'Guarded parking', 20, N'D', N'Guarded car park',NULL),
 (7, N'Relaxing massage', 289, N'H', N'It is a very gentle treatment, conducted in a calm, calming atmosphere, 
-which allows the patient to take their mind off their problems and relax fully.'),
+which allows the patient to take their mind off their problems and relax fully.',NULL),
 (8, N'Stone massage', 289, N'H', N'The hot stone massage has a physiotherapeutic effect.
 It restores the efficiency of damaged organs and, at the same time, promotes rest and regeneration. 
-It thus increases the body''s exercise capacity.'),
+It thus increases the body''s exercise capacity.',NULL),
 (9, N'Chinese bubble massage', 159, N'H', N'The Chinese bubble massage acts like a lymphatic drainage. Improves blood circulation,
-speeds up metabolism and removes excess toxic substances.'),
-(10, N'Mud bath', 120, N'H', N'A mud bath is an excellent spa treatment, regenerating the body and also beneficial to health. Mud is used for this.');
+speeds up metabolism and removes excess toxic substances.',NULL),
+(10, N'Mud bath', 120, N'H', N'A mud bath is an excellent spa treatment, regenerating the body and also beneficial to health. Mud is used for this.',NULL);
 
 
 
@@ -275,7 +276,7 @@ VALUES (1, N'Confirmed', N'A booking that is confirmed by a deposit paid.'),
 (2, N'Unconfirmed', N'A booking that is unconfirmed.'),
 (3, N'Awaiting', N'Booking status in case of no rooms available.');
 
--- Bookings
+-- Bookings  (!!!!!!)
 
 CREATE TABLE Bookings(
 	ID_Booking int IDENTITY(1,1) NOT NULL,
