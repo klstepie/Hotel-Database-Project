@@ -463,4 +463,62 @@ VALUES (1, 1, 1077, 1, CAST(N'2023-05-18T00:00:00' AS SmallDateTime), NULL, NULL
 
 SET IDENTITY_INSERT Payments OFF
 
+-- Reports types
+
+CREATE TABLE ReportsTypes(
+ID_ReportType char(2) NOT NULL,
+Name varchar(20) NOT NULL,
+Description text NULL,
+CONSTRAINT PK_ReportsTypes PRIMARY KEY (ID_ReportType)
+)
+
+-- USALI Reports
+
+CREATE TABLE USALIReports (
+ID_Report int IDENTITY(1,1) NOT NULL,
+ID_ReportType char(2) NOT NULL,
+Report XML NOT NULL,
+DateOfReport smalldatetime
+CONSTRAINT PK_ID_Report PRIMARY KEY (ID_Report)
+)
+
+ALTER TABLE USALIReports 
+ADD CONSTRAINT FK_USALIReports_ReportsTypes FOREIGN KEY(ID_ReportType)
+REFERENCES ReportsTypes (ID_ReportType)
+GO
+
+-- Types of expenses
+
+CREATE TABLE ExpensesType (
+ID_ExpenseCode char(4) NOT NULL,
+Name varchar(30) NOT NULL,
+Description text NULL
+CONSTRAINT PK_ID_ExpenseCode PRIMARY KEY (ID_ExpenseCode)
+)
+
+-- Expenses
+
+CREATE TABLE Expenses (
+ID_Expense int IDENTITY(1,1) NOT NULL,
+DeptNo char(3) NOT NULL,
+ID_ExpenseCode char(4) NOT NULL,
+Amount float NOT NULL,
+DateOfPurchase smalldatetime NOT NULL,
+AdditionalInformation text NULL
+CONSTRAINT PK_Expense PRIMARY KEY (ID_Expense)
+)
+
+ALTER TABLE Expenses 
+ADD CONSTRAINT FK_Expenses_Department FOREIGN KEY(DeptNo)
+REFERENCES Departments (DeptNo)
+GO
+
+
+ALTER TABLE Expenses
+ADD CONSTRAINT FK_Expenses_ExpensesType FOREIGN KEY(ID_ExpenseCode)
+REFERENCES ExpensesType (ID_ExpenseCode)
+GO
+
+
+
 
