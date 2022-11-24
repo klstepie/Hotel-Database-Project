@@ -472,6 +472,12 @@ Description text NULL,
 CONSTRAINT PK_ReportsTypes PRIMARY KEY (ID_ReportType)
 )
 
+-- Dumping data
+
+INSERT INTO ReportsTypes 
+VALUES (N'U1', N'Rooms', N'The scheme is intended to reflect a minimum standard of reporting.'),
+(N'U2', N'Spa&Wellnes', N'The scheme is intended to reflect a minimum standard of reporting.')
+
 -- USALI Reports
 
 CREATE TABLE USALIReports (
@@ -487,6 +493,9 @@ ADD CONSTRAINT FK_USALIReports_ReportsTypes FOREIGN KEY(ID_ReportType)
 REFERENCES ReportsTypes (ID_ReportType)
 GO
 
+ALTER TABLE USALIReports
+ADD CONSTRAINT DF_DateOfReport DEFAULT GETDATE() FOR DateOfReport
+
 -- Types of expenses
 
 CREATE TABLE ExpensesType (
@@ -495,6 +504,16 @@ Name varchar(30) NOT NULL,
 Description text NULL
 CONSTRAINT PK_ID_ExpenseCode PRIMARY KEY (ID_ExpenseCode)
 )
+
+-- Dumping data
+
+INSERT INTO ExpensesType 
+VALUES (N'CS', N'Cleaning Supplies', N'Room cleaning products.'),
+(N'HABP', N'Health and Beauty Products', N'Products needed for the spa area.'),
+(N'L', N'Linen', N'Purchase of bed linen and towels.'),
+(N'LADC', N'Laundry and Dry Cleaning', N'Washing of towels and bed linen.'),
+(N'SAG', N'Services and Gifts', N'Expenditure on complementary services.'),
+(N'SP', N'Swimming Pool', N'Maintenance and supply of the swimming pool.')
 
 -- Expenses
 
@@ -519,6 +538,25 @@ ADD CONSTRAINT FK_Expenses_ExpensesType FOREIGN KEY(ID_ExpenseCode)
 REFERENCES ExpensesType (ID_ExpenseCode)
 GO
 
+ALTER TABLE Expenses
+ADD CONSTRAINT DF_Expenses DEFAULT GETDATE() FOR DateOfPurchase
+
+-- Dumping data
+
+SET IDENTITY_INSERT Expenses ON 
+INSERT INTO Expenses (ID_Expense,DeptNo,ID_ExpenseCode,Amount,DateOfPurchase,AdditionalInformation)
+VALUES (1, N'SP1', N'CS  ', 600, N'2022-08-01', NULL),
+(2, N'SP1', N'L   ', 1200, N'2022-08-01', NULL),
+(3, N'SP1', N'LADC', 400, N'2022-08-01', NULL),
+(4, N'SP1', N'SAG ', 500, N'2022-08-01', NULL),
+(5, N'UD1', N'CS  ', 1100, N'2022-08-01', NULL),
+(6, N'UD1', N'L   ', 890, N'2022-08-01', NULL),
+(7, N'UD1', N'LADC', 600, N'2022-08-01', NULL),
+(8, N'UD1', N'SAG ', 500, N'2022-08-01', NULL),
+(9, N'UD1', N'SP  ', 2000, N'2022-08-01', NULL),
+(10, N'UD1', N'HABP', 800, N'2022-08-01', NULL),
+(11, N'SP1', N'CS  ', 300, N'2022-09-01', N'Purchase of carpet cleaners.')
+SET IDENTITY_INSERT Expenses OFF
 
 
 
