@@ -66,8 +66,8 @@ JOIN Bookings AS b
 ON b.ID_Booking = br.ID_Booking
 JOIN Guests AS g
 ON g.ID_Guest = b.ID_Guest
-WHERE b.DateFrom >= GETDATE()
-GO
+WHERE b.DateFrom >= GETDATE();
+
 
 CREATE VIEW v_CostOfServices 
 AS
@@ -75,10 +75,10 @@ SELECT rs.ID_Booking, rs.ID_Service,
 CASE
 WHEN hs.TimeUnit = 'D' THEN DATEDIFF(DAY,rs.StartDate,rs.EndDate) * hs.Price
 WHEN hs.TimeUnit = 'H' THEN DATEDIFF(HOUR,rs.StartDate,rs.EndDate) * hs.Price
-END AS AmountToBePaid
+END AS AmountToPay
 FROM ReservationOfServices AS rs
 JOIN HotelServices AS hs
-ON rs.ID_Service = hs.ID_Service
+ON rs.ID_Service = hs.ID_Service;
 
 CREATE VIEW v_AccomodationCost
 AS
@@ -90,7 +90,7 @@ JOIN BookingRooms AS br
 ON br.ID_Room = r.ID_Room
 JOIN Bookings AS b
 ON br.ID_Booking = b.ID_Booking
-GROUP BY b.ID_Booking
+GROUP BY b.ID_Booking;
 
 CREATE VIEW v_BookingsPaid
 AS 
@@ -108,7 +108,7 @@ JOIN Rooms AS r
 ON r.ID_Room = br.ID_Room
 JOIN PaymentMethods AS pm
 ON pm.ID_PaymentMethod = p.ID_PaymentMethod
-WHERE p.DateOfPayment IS NOT NULL
+WHERE p.DateOfPayment IS NOT NULL;
 
 
 CREATE VIEW v_RoomStatus
@@ -119,3 +119,13 @@ JOIN RoomTypes AS rt
 ON r.ID_RoomType = rt.ID_RoomType
 JOIN RoomStates AS rs
 ON r.ID_RoomState = rs.ID_RoomState
+
+-- Sum of the individual services on the booking
+
+CREATE VIEW v_TotalServicesPerBooking
+AS
+SELECT ID_Booking, ID_Service, SUM(AmountToPay) AS SumOfServices
+FROM v_CostOfServices
+GROUP BY ID_Booking, ID_Service
+
+
