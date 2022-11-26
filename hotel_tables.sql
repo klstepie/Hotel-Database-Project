@@ -75,7 +75,7 @@ CHECK  (([PESEL] LIKE '[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]')
 -- Dumping data 
 
 INSERT INTO Employees 
-VALUES (1, N'Jan', N'Kowalski', N'Car park attendant', N'ul. Motylkowa 2', N'Wroclaw', N'00-000', N'Polska', N'876321123   ', N'11111111111', N'Employed', N'PS1'),
+VALUES (1, N'Jan', N'Kowalski', N'Car park attendant', N'ul. Motylkowa 2', N'Wroclaw', N'00-000', N'Poland', N'876321123   ', N'11111111111', N'Employed', N'PS1'),
 (2, N'Maria', N'Nowak', N'Maid', N'ul. Rozana 2', N'Rzeszow', N'00-001', N'Poland', N'876321111   ', N'22222222222', N'Employed', N'SP1'),
 (3, N'Monika', N'Wichura', N'Maid', N'ul. Bratkowa 2', N'Krakow', N'00-002', N'Poland', N'876321122   ', N'33333333333', N'Employed',N'SP1'),
 (4, N'Lukasz', N'Biegun', N'Lifeguard', N'ul. Irysowa 2', N'Hel', N'00-003', N'Poland', N'876321133   ', N'44444444444', N'Employed', N'UD1'),
