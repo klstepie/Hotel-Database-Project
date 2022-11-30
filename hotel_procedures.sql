@@ -358,7 +358,158 @@ RAISERROR ('Incorrect booking number.',16,1)
 END
 GO
 
+-- Collecting payment
+
+CREATE procedure p_CollectPayment
+@id_booking int,
+@amount float,
+@method int
+AS
+IF(@id_booking IN (SELECT ID_Booking FROM Bookings))
+BEGIN
+	DECLARE @debt float
+	DECLARE @dateofpayment smalldatetime
+	SET @dateofpayment = (SELECT DateOfPayment from Payments where ID_Booking= @id_booking)
+
+	IF(@dateofpayment IS NULL)
+	BEGIN
+		SET @debt = (SELECT TotalAmountToPay from Payments where ID_Booking = @id_booking)
+		IF(@amount = @debt and @method IN (SELECT ID_PaymentMethod from PaymentMethods))
+		BEGIN
+			UPDATE Payments
+			SET DateOfPayment = GETDATE(), ID_PaymentMethod = @method
+			WHERE ID_Booking = @id_booking
+		END
+		ELSE
+		BEGIN
+		RAISERROR ('Incorrect amount charged. /Incorrect payment method selected. ',16,1)
+		END
+	END
+	ELSE
+	BEGIN
+	RAISERROR ('This guest has already made payment.',16,1)
+	END
+END
+ELSE
+BEGIN
+	RAISERROR ('Incorrect booking number.',16,1)
+END
+GO
+
+-- Opening payment
+
+CREATE PROCEDURE p_OpenPaymentForBooking
+@id_booking int,
+@method int = 1
+AS
+IF(@id_booking IN (SELECT ID_Booking from Bookings))
+BEGIN
+IF(@id_booking NOT IN (SELECT ID_Booking from Payments))
+BEGIN
+	declare @amount float
+	set @amount = (SELECT Total from v_AccomodationCost where ID_Booking = @id_booking )
+	declare @term smalldatetime
+	IF(@method = 2)
+	BEGIN
+	set @term = (Select DATEADD(DAY,14,DateTo) From Bookings where ID_Booking = @id_booking )
+	END
+	ELSE
+	BEGIN
+	set @term = (Select DateTo From Bookings where ID_Booking = @id_booking )
+	END
+	INSERT INTO Payments
+	(
+	ID_Booking,
+	TotalAmountToPay,
+	ID_PaymentMethod,
+	PaymentTerm
+	)
+	VALUES (
+	@id_booking,
+	@amount,
+	@method,
+	@term
+	)
+END
+ELSE
+BEGIN
+RAISERROR ('There is already payment for this booking.',16,1)
+END
+END
+ELSE 
+BEGIN
+RAISERROR ('There is no such reservation number.',16,1)
+END
+GO
 
 
+-- Accepting deposit
+
+CREATE PROCEDURE p_AcceptDeposit
+@id_booking int
+AS
+IF(@id_booking IN (SELECT ID_Booking from Payments) AND 
+(SELECT Deposit From Payments WHERE ID_Booking = @id_booking) IS NULL)
+BEGIN
+	DECLARE @correct_amount float
+	SET @correct_amount = (SELECT TotalAmountToPay * 0.2 
+	FROM Payments WHERE ID_Booking = @id_booking)
+	BEGIN
+	UPDATE Payments
+	SET Deposit = @correct_amount, TotalAmountToPay = (TotalAmountToPay - @correct_amount)
+	WHERE ID_Booking = @id_booking
+	UPDATE Bookings
+	SET ID_BookingStatus = 1
+	WHERE ID_Booking = @id_booking
+	END
+END
+ELSE
+BEGIN
+	RAISERROR ('There is no such reservation.',1,1) 
+END
+GO
+
+-- Booking services
+
+CREATE PROCEDURE p_BookServices
+@id_booking int,
+@id_service int,
+@datestart smalldatetime,
+@datestop smalldatetime,
+@id_employee int,
+@desc text = NULL
+AS 
+IF(@id_booking IN (SELECT ID_Booking FROM Bookings))
+BEGIN
+IF(@datestart < @datestop)
+BEGIN
+INSERT INTO ReservationOfServices
+(ID_Booking,
+ID_Service,
+StartDate,
+ID_Employee,
+Description,
+EndDate
+)
+VALUES
+(
+@id_booking,
+@id_service,
+@datestart,
+@id_employee,
+@desc,
+@datestop
+)
+END
+ELSE
+BEGIN
+RAISERROR ('Wrong date was entered.',16,1)
+END
+END
+ELSE
+BEGIN
+RAISERROR ('There is no such booking.',16,1)
+END
+GO
 
 
