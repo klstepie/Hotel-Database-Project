@@ -512,4 +512,199 @@ RAISERROR ('There is no such booking.',16,1)
 END
 GO
 
+-- Summary of additional services
 
+CREATE PROCEDURE p_SumUpAdditionalServices
+@id_booking int
+AS
+IF(@id_booking IN (SELECT ID_Booking FROM Bookings))
+BEGIN
+	DECLARE @status char(2)
+	SET @status = (SELECT StatusOfAdditionalServices FROM Payments WHERE ID_Booking = @id_booking)
+	IF(@status IS NULL)
+	BEGIN
+		DECLARE @service_amount float
+		SET @service_amount= (SELECT SUM(AmountToPay) FROM v_CostOfServices
+		WHERE ID_Booking = @id_booking)
+		IF(@service_amount IS NOT NULL)
+		BEGIN
+			DECLARE @stay_amount float
+			SET @stay_amount = (SELECT TotalAmountToPay FROM Payments WHERE ID_Booking = @id_booking)
+			DECLARE @total float
+			SET @total = @stay_amount + @service_amount
+			UPDATE Payments
+			SET TotalAmountToPay = @total, StatusOfAdditionalServices = 'OK'
+			WHERE ID_Booking = @id_booking
+		END
+		ELSE
+		BEGIN
+		RAISERROR ('This guest did not use the additional services.',16,1)
+		END
+	END
+	ELSE
+	BEGIN
+	RAISERROR ('Additional services have already been summarised for this booking.',16,1)
+	END
+END
+ELSE
+BEGIN
+RAISERROR ('Incorrect booking number.',16,1)
+END
+GO
+
+-- Checking out
+
+CREATE PROCEDURE p_CheckOut
+@id_booking int, @id_room int
+AS
+
+DECLARE @status int = 3;
+DECLARE @paymentdate smalldatetime;
+DECLARE @method int;
+
+IF(@id_booking IN (SELECT ID_Booking FROM Bookings))
+BEGIN
+	
+	SET @paymentdate = (
+	SELECT DateOfPayment
+	FROM Payments
+	WHERE ID_Booking = @id_booking
+	)
+
+	SET @method = (
+	SELECT ID_PaymentMethod
+	FROM Payments
+	WHERE ID_Booking = @id_booking
+	)
+
+	IF(@paymentdate IS NOT NULL OR @method = 2 )
+	BEGIN
+		IF(@id_room IN (SELECT ID_Room FROM BookingRooms WHERE ID_Booking = @id_booking))
+		BEGIN
+		UPDATE Rooms
+		SET ID_RoomState = @status
+		WHERE ID_Room = @id_room
+		END
+		ELSE
+		BEGIN
+		RAISERROR ('A room with this ID number was not assigned to this booking.',16,1)
+		END
+	END
+	ELSE
+	BEGIN
+		RAISERROR ('The guest did not pay for the stay.',16,1)
+	END
+END
+ELSE
+BEGIN
+RAISERROR ('Incorrect booking number.',16,1)
+END
+GO
+
+-- Searching for free rooms
+
+CREATE PROCEDURE p_SearchFreeRooms
+@dateFrom smalldatetime,
+@dateTo smalldatetime
+AS
+BEGIN
+DECLARE @currentDate date;
+SET @currentDate = (SELECT CAST(GETDATE() AS date))
+	IF(@dateFrom >= @currentDate AND @dateTo > @currentDate)
+		BEGIN
+		IF(@dateFrom > @dateTo OR @dateFrom = @dateTo)
+			BEGIN
+			RAISERROR('Incorrect date range.',16,1)
+			END
+			ELSE
+			BEGIN
+			SELECT DISTINCT R.ID_Room,R.Floor,R.RoomNo,RT.Type
+			FROM Rooms AS R
+			LEFT JOIN BookingRooms BR
+			ON R.ID_Room = BR.ID_Room
+			JOIN RoomTypes AS RT
+			ON RT.ID_RoomType = R.ID_RoomType
+			LEFT JOIN Bookings AS B
+			ON B.ID_Booking = BR.ID_Booking
+			WHERE R.ID_Room NOT IN (
+			SELECT R.ID_Room
+			FROM Rooms AS R
+			JOIN BookingRooms BR
+			ON R.ID_Room = BR.ID_Room
+			JOIN Bookings AS B
+			ON B.ID_Booking = BR.ID_Booking
+			WHERE
+			B.DateFrom BETWEEN @dateFrom AND @dateTo 
+			OR
+			B.DateTo BETWEEN @dateFrom AND @dateTo 
+			OR
+			@dateFrom BETWEEN B.DateFrom AND B.DateTo
+			OR
+			@dateTo  BETWEEN B.DateFrom AND B.DateTo
+			)
+			END
+		END
+ELSE
+BEGIN
+RAISERROR('Incorrect date range.',16,1)
+END
+END
+GO
+
+-- Changing arrival date
+
+CREATE PROCEDURE p_ChangeArrival
+@id_booking int,
+@dateBefore smalldatetime,
+@dateAfter smalldatetime
+AS
+
+DECLARE @currDatebefore smalldatetime
+
+IF(@id_booking IN (SELECT ID_Booking FROM Bookings))
+BEGIN
+	
+	set @currDatebefore = (
+	SELECT DateFrom
+	FROM Bookings
+	WHERE ID_Booking = @id_booking
+	)
+
+	IF(@dateBefore = @currDatebefore)
+	BEGIN
+		UPDATE Bookings
+		SET DateFrom = @dateAfter
+		WHERE ID_Booking = @id_booking
+		
+		DECLARE @newAmount float;
+		SET @newAmount = (SELECT Total FROM v_AccomodationCost WHERE ID_Booking = @id_booking)
+		DECLARE @ifDeposit float;
+		SET @ifDeposit = (SELECT Deposit FROM Payments WHERE ID_Booking = @id_booking)
+		
+		IF(@ifDeposit IS NOT NULL)
+		BEGIN
+		DECLARE @sum float;
+		SET @sum = @newAmount - @ifDeposit
+		UPDATE Payments
+		SET TotalAmountToPay = @sum
+		WHERE ID_Booking = @id_booking
+		END
+		ELSE
+		BEGIN
+		UPDATE Payments
+		SET TotalAmountToPay = @newAmount
+		WHERE ID_Booking = @id_booking
+		END
+	END
+	ELSE
+	BEGIN
+		RAISERROR ('The first date of the guest''s stay is different from the one entered.',1,1)
+	END
+END
+ELSE
+BEGIN
+RAISERROR ('Incorrect booking number.',1,1)
+END
+GO
+
+-- 
