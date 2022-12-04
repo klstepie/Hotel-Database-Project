@@ -78,6 +78,26 @@ RAISERROR ('Incorrect employee identification number.',16,1)
 END
 GO
 
+-- Dismissal of employees
+
+CREATE PROCEDURE p_FireEmployee
+@id_employee int
+AS
+DECLARE @empl_status varchar(11)
+SET @empl_status = (SELECT EmploymentStatus FROM Employees WHERE ID_Employee = @id_employee)
+IF(@id_employee IN (SELECT ID_Employee FROM Employees) AND @empl_status = 'Employed')
+BEGIN
+SET NOCOUNT ON 
+UPDATE Employees
+SET EmploymentStatus = 'Fired'
+WHERE ID_Employee = @id_employee
+END
+ELSE
+BEGIN
+	RAISERROR ('Incorrect employee identification number.',16,1)
+END
+GO
+
 -- Adding guests
 
 CREATE PROCEDURE p_AddGuest
@@ -707,5 +727,76 @@ RAISERROR ('Incorrect booking number.',1,1)
 END
 GO
 
--- 
+-- Changing departure date
+
+CREATE PROCEDURE p_ChangeDeparture
+@id_booking int,
+@dateBefore smalldatetime,
+@dateAfter smalldatetime
+AS
+DECLARE @currDatebefore smalldatetime
+IF(@id_booking IN (SELECT ID_Booking FROM Bookings))
+BEGIN
+	SET @currDatebefore = (
+	SELECT DateTo
+	FROM Bookings
+	WHERE ID_Booking = @id_booking
+	)
+
+	IF(@dateBefore = @currDatebefore)
+	BEGIN
+		UPDATE Bookings
+		SET DateTo = @dateAfter
+		WHERE ID_Booking = @id_booking
+		
+		DECLARE @newAmount float;
+		SET @newAmount = (SELECT Total FROM v_AccomodationCost WHERE ID_Booking = @id_booking)
+		DECLARE @ifDeposit float;
+		SET @ifDeposit = (SELECT Deposit FROM Payments WHERE ID_Booking = @id_booking)
+		DECLARE @term smalldatetime;
+		DECLARE @method int;
+		SET @method = (SELECT ID_PaymentMethod FROM Payments WHERE ID_Booking = @id_booking)
+		
+		IF(@ifDeposit IS NOT NULL)
+		BEGIN
+		DECLARE @total float;
+		SET @total = @newAmount - @ifDeposit
+		UPDATE Payments
+		SET TotalAmountToPay = @total
+		WHERE ID_Booking = @id_booking
+		END
+		ELSE
+		BEGIN
+		UPDATE Payments
+		SET TotalAmountToPay = @newAmount
+		WHERE ID_Booking = @id_booking
+		END
+		
+		IF(@method = 2)
+		BEGIN
+		SET @term = (SELECT DATEADD(DAY,14,DateTo) FROM Bookings WHERE ID_Booking = @id_booking)
+		UPDATE Payments
+		SET PaymentTerm = @term
+		WHERE ID_Booking = @id_booking
+		END
+		ELSE
+		BEGIN
+		SET @term = (SELECT DateTo FROM Bookings WHERE ID_Booking = @id_booking)
+		UPDATE Payments
+		SET PaymentTerm = @term
+		WHERE ID_Booking = @id_booking
+		END
+	END
+	ELSE
+	BEGIN
+		RAISERROR ('The first date of the guest''s stay is different from the one entered.',1,1)
+	END
+END
+ELSE
+BEGIN
+RAISERROR ('Incorrect booking number.',1,1)
+END
+GO
+
+
 
