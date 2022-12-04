@@ -798,5 +798,92 @@ RAISERROR ('Incorrect booking number.',1,1)
 END
 GO
 
+-- USALI Reports 
 
+---- SPA & Wellness
 
+CREATE PROCEDURE p_GenerateSpaWellnessReport
+AS
+BEGIN
+DECLARE @swimpool float;
+SET @swimpool = (SELECT SUM(SumOfServices)
+FROM v_TotalServicesPerBooking AS SU
+JOIN Bookings AS B
+ON B.ID_Booking = SU.ID_Booking
+WHERE SU.ID_Service = 2 AND YEAR(B.DateFrom) = YEAR(GETDATE())
+)
+SELECT * FROM v_TotalServicesPerBooking
+IF (@swimpool IS NULL) SET @swimpool = 0.0
+DECLARE @skincare float;
+SET @skincare = (
+SELECT SUM(SumOfServices)
+FROM v_TotalServicesPerBooking AS SU
+JOIN Bookings AS B
+ON B.ID_Booking = SU.ID_Booking
+WHERE SU.ID_Service = 11 AND YEAR(B.DateFrom) = YEAR(GETDATE())
+)
+IF (@skincare IS NULL) SET @skincare= 0.0
+DECLARE @bodytreatment float;
+SET @bodytreatment = (
+SELECT SUM(SumOfServices)
+FROM v_TotalServicesPerBooking AS SU
+JOIN Bookings AS B
+ON B.ID_Booking = SU.ID_Booking
+WHERE SU.ID_Service IN (1,3,7,8,9,10) AND YEAR(B.DateFrom) = YEAR(GETDATE())
+)
+IF (@bodytreatment IS NULL) SET @bodytreatment = 0.0
+DECLARE @total float;
+SET @total = @swimpool + @skincare + @bodytreatment;
+DECLARE @cs float;
+SET @cs = (
+SELECT SUM(Amount) FROM Expenses WHERE ID_ExpenseCode = 'CS' AND YEAR(DateOfPurchase) = YEAR(GETDATE()) AND DeptNo = 'UD1'
+)
+
+DECLARE @l float;
+SET @l = (
+SELECT SUM(Amount) FROM Expenses WHERE ID_ExpenseCode = 'L' AND YEAR(DateOfPurchase) = YEAR(GETDATE()) AND DeptNo = 'UD1'
+)
+DECLARE @ladc float;
+SET @ladc = (
+SELECT SUM(Amount) FROM Expenses WHERE ID_ExpenseCode = 'LADC' AND YEAR(DateOfPurchase) = YEAR(GETDATE()) AND DeptNo = 'UD1'
+)
+DECLARE @sag float;
+SET @sag = (
+SELECT SUM(Amount) FROM Expenses WHERE ID_ExpenseCode = 'SAG' AND YEAR(DateOfPurchase) = YEAR(GETDATE()) AND DeptNo = 'UD1'
+)
+DECLARE @sp float;
+SET @sp = (
+SELECT SUM(Amount) FROM Expenses WHERE ID_ExpenseCode = 'SP' AND YEAR(DateOfPurchase) = YEAR(GETDATE()) AND DeptNo = 'UD1'
+)
+DECLARE @habp float;
+SET @habp = (
+SELECT SUM(Amount) FROM Expenses WHERE ID_ExpenseCode = 'HABP' AND YEAR(DateOfPurchase) = YEAR(GETDATE()) AND DeptNo = 'UD1'
+)
+DECLARE @totalexpenses float;
+SET @totalexpenses = (
+SELECT SUM(Amount) FROM Expenses WHERE YEAR(DateOfPurchase) = YEAR(GETDATE()) AND DeptNo = 'UD1'
+)
+DECLARE @profit float;
+set @profit = @total - @totalexpenses
+DECLARE @document xml
+SET @document = (
+SELECT CAST(@swimpool AS decimal(7,2)) AS 'Income/SwimmingPool', 
+CAST(@skincare AS decimal(7,2)) AS 'Income/Skincare', 
+CAST(@bodytreatment AS decimal(7,2)) AS 'Income/BodyTreatments',
+CAST(@total AS decimal(7,2)) AS 'Income/TotalIncome', 
+CAST(@cs AS decimal(7,2)) AS 'Expenses/CleaningSupplies', 
+CAST(@l AS decimal(7,2)) AS 'Expenses/Linen', 
+CAST(@ladc AS decimal(7,2)) AS 'Expenses/LaundryAndDryCleaning',
+CAST(@sag AS decimal(7,2)) AS 'Expenses/ServicesAndGifts', 
+CAST(@SP AS decimal(7,2)) AS 'Expenses/SwimmingPool', 
+CAST(@habp AS decimal(7,2)) AS 'Expenses/HealthAndBeautyProducts', 
+CAST(@totalexpenses AS decimal(7,2)) AS 'Expenses/TotalExpenses',  
+CAST(@profit AS decimal(7,2)) AS 'Profit'
+FOR XML PATH ('SpaAndWellness'), ELEMENTS
+)
+INSERT INTO USALIReports
+VALUES ('U2',@document,GETDATE())
+END
+GO
+
+----- Rooms
