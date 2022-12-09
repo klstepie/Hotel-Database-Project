@@ -559,4 +559,36 @@ VALUES (1, N'SP1', N'CS  ', 600, N'2022-08-01', NULL),
 SET IDENTITY_INSERT Expenses OFF
 
 
+-- EmployeePayments 
+
+CREATE TABLE [dbo].[EmployeePayments](
+	[ID_Employee] [int] NOT NULL,
+	[RateChangeDate] [smalldatetime] NOT NULL,
+	[Rate] [float] NOT NULL
+) ON [PRIMARY]
+GO
+
+ALTER TABLE [dbo].[EmployeePayments] ADD  DEFAULT (getdate()) FOR [RateChangeDate]
+GO
+
+ALTER TABLE [dbo].[EmployeePayments]  WITH CHECK ADD  CONSTRAINT [FK_Employee] FOREIGN KEY([ID_Employee])
+REFERENCES [dbo].[Employees] ([ID_Employee])
+GO
+
+-- EmployeeHoursPerDay
+
+CREATE TABLE EmployeeHoursPerDay (
+ID_EHP int IDENTITY(1,1) NOT NULL PRIMARY KEY,
+ID_Employee int NOT NULL,
+Date smalldatetime,
+WorkHours int
+CONSTRAINT FK_EmployeeHours_Employees FOREIGN KEY (ID_Employee)
+REFERENCES Employees (ID_Employee)
+)
+
+
+INSERT INTO EmployeeHoursPerDay (ID_Employee,Date,WorkHours)
+VALUES (1,'2022-11-01',10),(1,'2022-11-05',10),(1,'2022-11-07',10),(1,'2022-11-10',10),(1,'2022-11-15',10),(1,'2022-11-17',8),
+(2,'2022-11-01',8),(2,'2022-11-05',8),(2,'2022-11-07',8),(2,'2022-11-10',8),(2,'2022-11-15',8),(2,'2022-11-17',8),
+(7,'2022-11-01',12),(7,'2022-11-05',8),(7,'2022-11-07',12),(7,'2022-11-10',8),(7,'2022-11-15',12),(7,'2022-11-17',8)
 
