@@ -35,3 +35,22 @@ END
 
 -- Execute
 SELECT * FROM dbo.payment_table(1)
+
+-- Counting how many particular guest visits our hotel 
+CREATE FUNCTION f_loyalfactor(@guest int)
+RETURNS int
+AS
+BEGIN
+DECLARE @factor int
+SET @factor = (SELECT COUNT(ID_Booking) FROM Bookings WHERE ID_Guest = @guest)
+RETURN @factor 
+END
+
+-- Execute
+SELECT ID_Guest, FirstName, LastName, EmailAddress, PhoneNumber , dbo.f_loyalfactor(ID_Guest) AS NumberOfVisits,
+CASE
+WHEN dbo.f_loyalfactor(ID_Guest) > 2 THEN 'Loyal guest'
+ELSE 'Not defined'
+END
+AS Loyalty
+FROM Guests
