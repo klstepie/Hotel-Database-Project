@@ -1,6 +1,5 @@
 # Hotel-Database-Project
 The design of a relational-document database. <br/>
-It's my first complex project. <br/>
 It represents relational-document hotel database. It contains only two main departments - reception and additional services. <br/>
 
 This database project focuses on combining the advantages of the relational and document models. The document model is more flexible in terms of data storage. 
@@ -22,6 +21,6 @@ Combining the relational model with the document model allows the database syste
 This hybrid approach provides greater flexibility in handling different types of data, guarantees read and write consistency without performance degradation, and allows data from relational and document formats to be combined in the same SQL queries, e.g. comparing individual economic indicators found in XML reports with their current values, which are calculated from the contents of many different tables.
 
 This project is based on my knowledge of hotel industry, I am not a professional. Creating this project is just fun for me. </br>
-I try to have a professional approach to developing database systems, so I defined user roles and functional and non-functional requirements before designing the system. </br>
+
 
 
